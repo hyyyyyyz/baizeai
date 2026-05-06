@@ -1,0 +1,40 @@
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local AI assistant config (Claude Code)
+.claude/
+.claude.local/
+
+# Local logs / backups
+.deploy.log
+*.log
+*.bak
+*.bak.*
+
+# Local-only deploy script (use scripts/deploy.sh.example as template)
+deploy.sh
+
+# Internal documents (not for OSS repo)
+*.doc
+*.docx
+
+# Local screenshots / drafts
+界面设计.png
+发给耀增*/
+产品合规数据来源/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Server runtime data (built/regenerated)
+server/data/
+server/compliance/

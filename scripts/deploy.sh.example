@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+# 白泽 · 一键部署模板
+#
+# 用法：
+#   1. 复制为项目根目录的 deploy.sh：
+#        cp scripts/deploy.sh.example deploy.sh && chmod +x deploy.sh
+#   2. 编辑 deploy.sh 顶部的 SERVER_HOST / SERVER_PATH / DOMAIN 三个变量
+#   3. 确保你已配好到服务器的 SSH 免密登录（ssh-copy-id）
+#   4. 跑：
+#        ./deploy.sh           # 预演 + 确认 + 同步
+#        ./deploy.sh -y        # 跳过确认直接推
+#        ./deploy.sh --logs    # 不部署，只看服务器最近 30 行 nginx 错误日志
+
+set -euo pipefail
+
+# ===== 配置（必填，按你的环境改） =====
+SERVER_HOST="${BAIZE_SERVER:-root@your.server.ip.here}"
+SERVER_PATH="${BAIZE_PATH:-/var/www/baize/}"
+DOMAIN="${BAIZE_DOMAIN:-yourdomain.example.com}"
+
+# ===== 内部变量 =====
+LOCAL_DIR="$(cd "$(dirname "$0")" && pwd)/"
+LOG_FILE="$(dirname "$0")/.deploy.log"
+
+EXCLUDES=(
+  ".DS_Store" ".git/" ".claude/" ".vscode/" ".idea/"
+  "*.bak" "*.bak.*"
+  "deploy.sh" ".deploy.log"
+  "node_modules/"
+  "server/"
+  "scripts/"
+  "README.md" "LICENSE" ".gitignore" ".editorconfig"
+  # Local-only data (gitignored too)
+  "*.doc" "*.docx"
+  "界面设计.png"
+  "发给*"
+  "产品合规数据来源/"
+)
+
+# ===== 颜色 =====
+if [ -t 1 ]; then
+  C_RST='\033[0m'; C_BOLD='\033[1m'
+  C_RED='\033[31m'; C_GRN='\033[32m'; C_YEL='\033[33m'; C_BLU='\033[34m'; C_DIM='\033[90m'
+else
+  C_RST=''; C_BOLD=''; C_RED=''; C_GRN=''; C_YEL=''; C_BLU=''; C_DIM=''
+fi
+say()  { echo -e "${C_BOLD}${C_BLU}▸${C_RST} $*"; }
+ok()   { echo -e "${C_GRN}✓${C_RST} $*"; }
+warn() { echo -e "${C_YEL}!${C_RST} $*"; }
+err()  { echo -e "${C_RED}✗${C_RST} $*" >&2; }
+dim()  { echo -e "${C_DIM}$*${C_RST}"; }
+
+AUTO_YES=0
+LOGS_ONLY=0
+for arg in "$@"; do
+  case "$arg" in
+    -y|--yes) AUTO_YES=1 ;;
+    --logs)   LOGS_ONLY=1 ;;
+    -h|--help) sed -n '2,12p' "$0" | sed 's/^# //;s/^#//'; exit 0 ;;
+    *) err "未知参数：$arg"; exit 1 ;;
+  esac
+done
+
+if [ "$LOGS_ONLY" -eq 1 ]; then
+  say "拉取服务器 nginx 错误日志（最近 30 行）..."
+  ssh "$SERVER_HOST" 'tail -30 /var/log/nginx/error.log 2>/dev/null || echo "(无错误日志)"'
+  exit 0
+fi
+
+cd "$LOCAL_DIR"
+[ -f index.html ] || { err "找不到 index.html，请在项目根目录运行此脚本"; exit 1; }
+
+# ===== 本地 JS 语法检查（如果有 node） =====
+if command -v node >/dev/null 2>&1; then
+  say "本地 JS 语法检查..."
+  if ! node -e "const fs=require('fs');const html=fs.readFileSync('index.html','utf8');const m=html.match(/<script>([\s\S]*?)<\/script>/);if(!m){process.exit(0);}new Function(m[1]);" 2>/tmp/baize_jscheck; then
+    err "index.html 中的 JS 有语法错误，已阻止部署："
+    cat /tmp/baize_jscheck >&2
+    exit 1
+  fi
+  ok "JS 语法 OK"
+fi
+
+# ===== 注入版本号 =====
+VERSION="v$(date +%Y%m%d-%H%M%S)"
+TMP_HTML="$(mktemp)"
+awk -v v="$VERSION" 'NR==1 && /<!DOCTYPE/ {print; next}
+  /<head>/ && !done {print; print "<!-- " v " -->"; done=1; next}
+  {print}' index.html > "$TMP_HTML"
+
+RSYNC_EXCLUDES=()
+for e in "${EXCLUDES[@]}"; do RSYNC_EXCLUDES+=(--exclude="$e"); done
+
+# ===== Dry-run =====
+LOCAL_HTML_HASH=$(awk '!/^<!-- v[0-9-]+ -->$/' index.html | shasum | awk '{print $1}')
+REMOTE_HTML_HASH=$(ssh "$SERVER_HOST" "awk '!/^<!-- v[0-9-]+ -->\$/' $SERVER_PATH/index.html 2>/dev/null | shasum | awk '{print \$1}'" || echo "none")
+HTML_CHANGED=0
+[ "$LOCAL_HTML_HASH" != "$REMOTE_HTML_HASH" ] && HTML_CHANGED=1
+
+say "预演 (dry-run)：将要同步的变化"
+echo
+DRY_OUTPUT="$(rsync -avzc --delete --dry-run --exclude='index.html' "${RSYNC_EXCLUDES[@]}" ./ "$SERVER_HOST:$SERVER_PATH" 2>&1)"
+CHANGES="$(echo "$DRY_OUTPUT" | grep -E '^[<>cdLh*.][a-zA-Z]+|^deleting ' || true)"
+
+if [ -z "$CHANGES" ] && [ "$HTML_CHANGED" -eq 0 ]; then
+  warn "没有任何文件内容变化，无需部署"
+  rm -f "$TMP_HTML"
+  exit 0
+fi
+
+[ "$HTML_CHANGED" -eq 1 ] && echo "  ${C_GRN}M${C_RST}  index.html  ${C_DIM}(注入版本号 $VERSION)${C_RST}"
+if [ -n "$CHANGES" ]; then
+  echo "$CHANGES" | while read -r line; do
+    case "$line" in
+      \>f*)         echo "  ${C_GRN}+${C_RST}  ${line#* }" ;;
+      deleting*)    echo "  ${C_RED}-${C_RST}  ${line#deleting }" ;;
+      cd*)          echo "  ${C_BLU}D${C_RST}  ${line#* }" ;;
+      *)            echo "  ${C_YEL}~${C_RST}  ${line#* }" ;;
+    esac
+  done
+fi
+echo
+
+if [ "$AUTO_YES" -eq 0 ]; then
+  read -rp "$(echo -e "${C_BOLD}回车确认部署，Ctrl+C 取消：${C_RST}")" _
+fi
+
+say "上传文件中..."
+rsync -azc --delete --exclude='index.html' "${RSYNC_EXCLUDES[@]}" ./ "$SERVER_HOST:$SERVER_PATH"
+[ "$HTML_CHANGED" -eq 1 ] && rsync -azc "$TMP_HTML" "$SERVER_HOST:${SERVER_PATH}index.html"
+rm -f "$TMP_HTML"
+ok "文件同步完成"
+
+say "修复服务器文件权限 + 校验 nginx 配置..."
+ssh "$SERVER_HOST" "
+  chown -R www-data:www-data $SERVER_PATH
+  find $SERVER_PATH -type f -exec chmod 644 {} \;
+  find $SERVER_PATH -type d -exec chmod 755 {} \;
+  nginx -t 2>&1 | tail -2
+" || { err "服务器侧失败"; exit 1; }
+ok "权限 OK + nginx 配置 OK"
+
+say "健康检查..."
+sleep 1
+HTML_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://$DOMAIN/" -m 8 || echo "000")
+LOGO_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://$DOMAIN/logo.jpg" -m 8 || echo "000")
+HTML_VERSION=$(curl -s "http://$DOMAIN/" -m 8 | grep -oE '<!-- v[0-9-]+' | head -1 || echo "")
+
+if [ "$HTML_STATUS" = "200" ] && [ "$LOGO_STATUS" = "200" ]; then
+  ok "首页 HTTP $HTML_STATUS · logo HTTP $LOGO_STATUS · 线上版本 $HTML_VERSION"
+else
+  warn "健康检查异常：首页 $HTML_STATUS / logo $LOGO_STATUS（域名未解析/未备案/CDN 未生效都可能导致）"
+fi
+
+echo "$(date '+%Y-%m-%d %H:%M:%S')  $VERSION  html=$HTML_STATUS logo=$LOGO_STATUS" >> "$LOG_FILE"
+
+echo
+ok "部署完成 → ${C_BOLD}http://$DOMAIN${C_RST}"
