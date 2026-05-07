@@ -1236,91 +1236,126 @@
     color: var(--text-muted); font-size: 13px; cursor: pointer;
   }
   .bd-back-btn:hover { color: var(--primary); border-color: var(--primary); }
-  .bd-grid {
+  .bd-board {
     display: grid;
     grid-template-columns: 1fr 1.1fr 1fr;
-    grid-template-rows: 1fr 1.15fr 1fr;
-    gap: 14px;
-    min-height: 600px;
+    gap: 18px;
+    align-items: stretch;
   }
-  .bd-cell {
+  .bd-col { display: flex; flex-direction: column; gap: 14px; }
+  .bd-card {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 16px 18px;
-    display: flex; flex-direction: column;
+    padding: 14px 16px;
     box-shadow: var(--shadow);
     position: relative;
     overflow: hidden;
+    flex: 1;
+    display: flex; flex-direction: column;
   }
-  .bd-cell::before {
+  .bd-card::before {
     content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 4px; background: linear-gradient(180deg, var(--primary), var(--accent));
+    width: 3px;
+    background: linear-gradient(180deg, var(--primary), var(--accent));
   }
-  .bd-cell-title {
-    font-size: 13px; font-weight: 600; color: var(--text-soft);
-    margin-bottom: 10px; letter-spacing: 0.2px;
+  .bd-card-title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 10px;
   }
-  .bd-cell-body { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-  .bd-metric-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .bd-metric-label { font-size: 12px; color: var(--text-muted); }
-  .bd-metric-value {
-    font-size: 22px; font-weight: 700; color: var(--text);
+  .bd-card-title::before {
+    content: ''; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--primary);
+  }
+  .bd-sub {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 0; gap: 10px;
+  }
+  .bd-sub + .bd-sub { border-top: 1px dashed var(--border); }
+  .bd-sub-label { font-size: 12px; color: var(--text-muted); }
+  .bd-sub-value {
+    font-size: 18px; font-weight: 700; color: var(--text);
     font-variant-numeric: tabular-nums;
   }
-  .bd-metric-value.score { color: var(--primary); }
-  .bd-metric-unit { font-size: 12px; color: var(--text-muted); margin-left: 2px; font-weight: 500; }
+  .bd-sub-value.score { color: var(--primary); }
+  .bd-sub-unit { font-size: 11px; color: var(--text-muted); margin-left: 2px; font-weight: 500; }
   .bd-mini-bar {
-    height: 6px; border-radius: 999px; background: var(--bg-soft);
-    border: 1px solid var(--border); overflow: hidden;
+    height: 4px; border-radius: 999px; background: var(--bg-soft);
+    border: 1px solid var(--border); overflow: hidden; margin-top: 6px;
   }
   .bd-mini-bar > i {
     display: block; height: 100%;
     background: linear-gradient(90deg, var(--primary), var(--accent));
   }
 
-  /* center cell — student profile */
-  .bd-cell-profile {
-    background: linear-gradient(135deg, var(--primary-soft), var(--bg-soft));
-    align-items: center; justify-content: center; text-align: center;
-    padding: 18px 16px;
+  /* center column — profile + radar */
+  .bd-center {
+    display: flex; flex-direction: column; gap: 14px;
+    background: linear-gradient(160deg, var(--primary-soft), var(--bg-soft) 60%, var(--panel));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 18px 18px;
+    align-items: center; text-align: center;
+    box-shadow: var(--shadow);
   }
-  .bd-cell-profile::before { display: none; }
   .bd-profile-photo {
-    width: 132px; height: 132px; border-radius: 50%;
-    object-fit: cover; box-shadow: 0 6px 24px rgba(79, 70, 229, 0.25);
+    width: 128px; height: 128px; border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 24px rgba(79, 70, 229, 0.25);
     border: 4px solid var(--panel);
-    margin-bottom: 12px;
   }
   .bd-profile-name {
     font-size: 22px; font-weight: 700; color: var(--text);
-    margin-bottom: 4px;
   }
   .bd-profile-id {
-    font-size: 13px; color: var(--text-muted);
+    font-size: 12px; color: var(--text-muted);
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    margin-bottom: 10px;
+    margin-top: 2px;
   }
   .bd-profile-tag {
     display: inline-block; padding: 4px 12px;
     background: var(--primary); color: #fff;
     border-radius: 999px; font-size: 12px; font-weight: 500;
+    margin-top: 4px;
   }
-
-  /* skill list cell */
-  .bd-skill-list { display: flex; flex-direction: column; gap: 6px; }
+  .bd-radar-wrap { width: 100%; max-width: 360px; margin-top: 4px; }
+  .bd-radar svg { width: 100%; height: auto; display: block; }
+  .bd-radar-axis { stroke: var(--border-strong); stroke-width: 1; fill: none; }
+  .bd-radar-grid { stroke: var(--border); stroke-width: 1; fill: none; }
+  .bd-radar-fill { fill: var(--primary); fill-opacity: 0.18; stroke: var(--primary); stroke-width: 2; }
+  .bd-radar-dot  { fill: var(--accent); stroke: var(--panel); stroke-width: 1.5; }
+  .bd-radar-label {
+    font-size: 11px; fill: var(--text-soft); font-weight: 500;
+    dominant-baseline: middle;
+  }
+  .bd-skill-block {
+    width: 100%; margin-top: 4px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: left;
+  }
+  .bd-skill-head {
+    font-size: 12px; font-weight: 600; color: var(--text-soft);
+    margin-bottom: 8px;
+  }
+  .bd-skill-list { display: flex; flex-wrap: wrap; gap: 6px; }
   .bd-skill-pill {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 6px 10px; border-radius: 8px;
-    background: var(--bg-soft); border: 1px solid var(--border);
-    font-size: 12px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary); font-size: 12px; font-weight: 500;
   }
-  .bd-skill-pill .name { color: var(--text-soft); }
-  .bd-skill-pill .lvl  { color: var(--primary); font-weight: 600; }
+  .bd-skill-pill .lvl {
+    background: var(--primary); color: #fff;
+    border-radius: 999px; padding: 1px 6px; font-size: 10px; font-weight: 600;
+  }
 
-  @media (max-width: 980px) {
-    .bd-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-    .bd-cell-profile { grid-column: 1 / -1; }
+  @media (max-width: 1100px) {
+    .bd-board { grid-template-columns: 1fr; }
+    .bd-center { order: -1; }
   }
 
   /* ===== Admin ===== */
@@ -4419,82 +4454,128 @@ function renderBdRanking(main) {
   main.querySelector('#bdExport').onclick = () => alert('导出功能为演示占位 · 后续将打通成绩与导出系统');
 }
 
+function _bdRadarSvg(values, labels) {
+  // values & labels arrays of equal length n; values 0..100
+  const n = values.length;
+  const cx = 180, cy = 180, R = 120;
+  const angleFor = (i) => -Math.PI / 2 + i * (2 * Math.PI / n);
+  const ptOnAxis = (i, scale) => {
+    const a = angleFor(i);
+    return [cx + Math.cos(a) * R * scale, cy + Math.sin(a) * R * scale];
+  };
+  // Concentric grid polygons
+  const grid = [0.25, 0.5, 0.75, 1].map((s) => {
+    const pts = Array.from({length: n}, (_, i) => ptOnAxis(i, s).join(',')).join(' ');
+    return `<polygon class="bd-radar-grid" points="${pts}"/>`;
+  }).join('');
+  // Axes
+  const axes = Array.from({length: n}, (_, i) => {
+    const [x, y] = ptOnAxis(i, 1);
+    return `<line class="bd-radar-axis" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+  }).join('');
+  // Data polygon
+  const dataPts = values.map((v, i) => ptOnAxis(i, Math.max(0, Math.min(100, v)) / 100).join(',')).join(' ');
+  const dots = values.map((v, i) => {
+    const [x, y] = ptOnAxis(i, Math.max(0, Math.min(100, v)) / 100);
+    return `<circle class="bd-radar-dot" cx="${x}" cy="${y}" r="3.5"/>`;
+  }).join('');
+  // Labels around the polygon
+  const labelEls = labels.map((l, i) => {
+    const [x, y] = ptOnAxis(i, 1.2);
+    let anchor = 'middle';
+    if (x < cx - 10) anchor = 'end';
+    else if (x > cx + 10) anchor = 'start';
+    return `<text class="bd-radar-label" x="${x}" y="${y}" text-anchor="${anchor}">${escapeHtml(l)}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+    ${grid}${axes}
+    <polygon class="bd-radar-fill" points="${dataPts}"/>
+    ${dots}${labelEls}
+  </svg>`;
+}
+
 function renderBdDetail(main, stu) {
   const m = stu.metrics;
   const composite = _bdComposite(stu);
 
-  const cell = (title, body) => `
-    <div class="bd-cell">
-      <div class="bd-cell-title">${title}</div>
-      <div class="bd-cell-body">${body}</div>
+  const card = (title, rows) => `
+    <div class="bd-card">
+      <div class="bd-card-title">${title}</div>
+      ${rows.map(([label, value, unit, score]) => `
+        <div class="bd-sub">
+          <span class="bd-sub-label">${label}</span>
+          <span class="bd-sub-value${score ? ' score' : ''}">${value}${unit ? `<span class="bd-sub-unit">${unit}</span>` : ''}</span>
+        </div>
+        ${score ? `<div class="bd-mini-bar"><i style="width:${value}%"></i></div>` : ''}
+      `).join('')}
     </div>`;
 
-  const scoreBlock = (label, val, sub) => `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">${label}</span>
-      <span class="bd-metric-value score">${val}</span>
-    </div>
-    <div class="bd-mini-bar"><i style="width:${val}%"></i></div>
-    ${sub ? `<div class="bd-metric-label" style="text-align:right;margin-top:2px;">${sub}</div>` : ''}`;
+  const left = `
+    <div class="bd-col">
+      ${card('产品图片处理', [
+        ['累计数量', m.img_count, '张'],
+        ['AI 得分',  m.img_score, '', true],
+        ['综合得分', m.img_total, '', true],
+      ])}
+      ${card('产品短视频制作', [
+        ['累计数量', m.video_count, '条'],
+        ['AI 得分',  m.video_score, '', true],
+        ['综合得分', m.video_total, '', true],
+      ])}
+      ${card('产品文案制作', [
+        ['累计数量', m.copy_count, '篇'],
+        ['AI 得分',  m.copy_score, '', true],
+        ['综合得分', m.copy_total, '', true],
+      ])}
+      ${card('产品数据 / 属性分析', [
+        ['属性匹配度', m.data_attr, '', true],
+        ['综合得分',   m.data_total, '', true],
+      ])}
+    </div>`;
 
-  const c1 = cell('产品图片处理', `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">处理数量</span>
-      <span class="bd-metric-value">${m.img_count}<span class="bd-metric-unit">张</span></span>
-    </div>
-    ${scoreBlock('单张 AI 得分', m.img_score)}
-    ${scoreBlock('综合得分', m.img_total)}
-  `);
-  const c2 = cell('产品 Listing 打造', `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">打造数量</span>
-      <span class="bd-metric-value">${m.list_count}<span class="bd-metric-unit">个</span></span>
-    </div>
-    ${scoreBlock('单个 Listing 得分', m.list_score)}
-    ${scoreBlock('综合得分', m.list_total)}
-  `);
-  const c3 = cell('累计算力消耗', `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">累计算力</span>
-      <span class="bd-metric-value">${m.power_used.toLocaleString()}<span class="bd-metric-unit">tk</span></span>
-    </div>
-    ${scoreBlock('使用效率', m.power_eff, '高于班级均值')}
-  `);
-  const c4 = cell('产品短视频制作', `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">制作数量</span>
-      <span class="bd-metric-value">${m.video_count}<span class="bd-metric-unit">条</span></span>
-    </div>
-    ${scoreBlock('单条视频得分', m.video_score)}
-    ${scoreBlock('综合得分', m.video_total)}
-  `);
+  const right = `
+    <div class="bd-col">
+      ${card('产品 Listing 打造', [
+        ['累计数量', m.list_count, '个'],
+        ['AI 得分',  m.list_score, '', true],
+        ['综合得分', m.list_total, '', true],
+      ])}
+      ${card('累计算力消耗', [
+        ['累计算力', m.power_used.toLocaleString(), 'tk'],
+        ['使用效率', m.power_eff, '', true],
+      ])}
+      ${card('价格 / 供应链分析', [
+        ['价格+供应链', m.price_chain, '', true],
+        ['综合得分',    m.price_total, '', true],
+      ])}
+      ${card('整体活跃度', [
+        ['累计提交',   m.img_count + m.list_count + m.video_count + m.copy_count, '次'],
+        ['班级排位百分比', composite, '', true],
+      ])}
+    </div>`;
+
+  const radarLabels = ['图片', 'Listing', '视频', '文案', '数据', '价格', '算力', '综合'];
+  const radarValues = [m.img_total, m.list_total, m.video_total, m.copy_total,
+                       m.data_total, m.price_total, m.power_eff, composite];
+
+  const skillsBody = m.skills.map(([n, lvl]) =>
+    `<span class="bd-skill-pill">${escapeHtml(n)}<span class="lvl">Lv.${lvl}</span></span>`
+  ).join('') || '<span style="color:var(--text-muted);font-size:12px;">暂无</span>';
+
   const center = `
-    <div class="bd-cell bd-cell-profile">
+    <div class="bd-center">
       <img class="bd-profile-photo" src="${stu.avatar}" alt=""/>
-      <div class="bd-profile-name">${escapeHtml(stu.name)}</div>
-      <div class="bd-profile-id">${escapeHtml(stu.id)}</div>
-      <div class="bd-profile-tag">${escapeHtml(stu.major)} · 综合 ${composite.toFixed(1)}</div>
+      <div>
+        <div class="bd-profile-name">${escapeHtml(stu.name)}</div>
+        <div class="bd-profile-id">${escapeHtml(stu.id)}</div>
+        <div class="bd-profile-tag">${escapeHtml(stu.major)} · 综合 ${composite.toFixed(1)}</div>
+      </div>
+      <div class="bd-radar-wrap"><div class="bd-radar">${_bdRadarSvg(radarValues, radarLabels)}</div></div>
+      <div class="bd-skill-block">
+        <div class="bd-skill-head">自主开发技能（数字员工）</div>
+        <div class="bd-skill-list">${skillsBody}</div>
+      </div>
     </div>`;
-  const c6 = cell('产品文案制作', `
-    <div class="bd-metric-row">
-      <span class="bd-metric-label">制作数量</span>
-      <span class="bd-metric-value">${m.copy_count}<span class="bd-metric-unit">篇</span></span>
-    </div>
-    ${scoreBlock('单篇 AI 得分', m.copy_score)}
-    ${scoreBlock('综合得分', m.copy_total)}
-  `);
-  const c7 = cell('产品数据 / 属性分析', `
-    ${scoreBlock('属性匹配度', m.data_attr)}
-    ${scoreBlock('综合得分', m.data_total)}
-  `);
-  const c8 = cell('价格 / 供应链分析', `
-    ${scoreBlock('价格 + 供应链分析', m.price_chain)}
-    ${scoreBlock('综合得分', m.price_total)}
-  `);
-  const skillsBody = m.skills.map(([n, lvl]) => `
-    <div class="bd-skill-pill"><span class="name">${escapeHtml(n)}</span><span class="lvl">Lv.${lvl}</span></div>
-  `).join('') || '<div style="color:var(--text-muted);font-size:12px;">暂无自主开发的数字员工</div>';
-  const c9 = cell('自主开发技能（数字员工）', `<div class="bd-skill-list">${skillsBody}</div>`);
 
   main.innerHTML = `
     <div class="page">
@@ -4505,10 +4586,8 @@ function renderBdDetail(main, stu) {
           <div class="page-sub">${escapeHtml(stu.id)} · ${escapeHtml(stu.major)}</div>
         </div>
       </div>
-      <div class="bd-grid">
-        ${c1}${c2}${c3}
-        ${c4}${center}${c6}
-        ${c7}${c8}${c9}
+      <div class="bd-board">
+        ${left}${center}${right}
       </div>
     </div>`;
 
