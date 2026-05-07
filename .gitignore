@@ -24,8 +24,12 @@ deploy.sh
 
 # Local screenshots / drafts
 界面设计.png
+学生行为数据看板.png
 发给耀增*/
 产品合规数据来源/
+
+# Internal documentation (LaTeX source, generated PDFs, dev log)
+docs/
 
 # Node
 node_modules/

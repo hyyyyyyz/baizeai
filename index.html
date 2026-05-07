@@ -1174,6 +1174,155 @@
     background: var(--panel); color: var(--text); font: inherit; font-size: 13px;
   }
 
+  /* ===== Behavior dashboard (学生学习行为数据看板) ===== */
+  .bd-rank-bar {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .bd-search {
+    flex: 1; min-width: 220px; padding: 8px 12px;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--panel); color: var(--text); font-size: 13px;
+  }
+  .bd-rank-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-size: 13px;
+  }
+  .bd-rank-table th, .bd-rank-table td {
+    padding: 12px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .bd-rank-table th {
+    font-weight: 600; color: var(--text-muted); font-size: 12px;
+    background: var(--bg-soft);
+  }
+  .bd-rank-row { cursor: pointer; transition: background 0.12s; }
+  .bd-rank-row:hover { background: var(--hover); }
+  .bd-rank-medal {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    font-weight: 700; font-size: 13px;
+    background: var(--bg-soft); color: var(--text-muted);
+  }
+  .bd-rank-medal.gold   { background: linear-gradient(135deg, #fde68a, #f5c46a); color: #7c4a03; }
+  .bd-rank-medal.silver { background: linear-gradient(135deg, #e5e7eb, #cbd5e1); color: #1f2330; }
+  .bd-rank-medal.bronze { background: linear-gradient(135deg, #fcd9b6, #e0a572); color: #5a2e08; }
+  .bd-stu-cell { display: flex; align-items: center; gap: 12px; }
+  .bd-stu-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0;
+    border: 2px solid var(--border);
+  }
+  .bd-stu-name { font-weight: 600; }
+  .bd-stu-id   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .bd-score    { font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .bd-bar-wrap {
+    width: 120px; height: 8px; border-radius: 999px;
+    background: var(--bg-soft); overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .bd-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+
+  /* Individual student dashboard */
+  .bd-detail-hd { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .bd-back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border-strong); background: var(--panel);
+    color: var(--text-muted); font-size: 13px; cursor: pointer;
+  }
+  .bd-back-btn:hover { color: var(--primary); border-color: var(--primary); }
+  .bd-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    grid-template-rows: 1fr 1.15fr 1fr;
+    gap: 14px;
+    min-height: 600px;
+  }
+  .bd-cell {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .bd-cell::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: linear-gradient(180deg, var(--primary), var(--accent));
+  }
+  .bd-cell-title {
+    font-size: 13px; font-weight: 600; color: var(--text-soft);
+    margin-bottom: 10px; letter-spacing: 0.2px;
+  }
+  .bd-cell-body { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+  .bd-metric-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .bd-metric-label { font-size: 12px; color: var(--text-muted); }
+  .bd-metric-value {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .bd-metric-value.score { color: var(--primary); }
+  .bd-metric-unit { font-size: 12px; color: var(--text-muted); margin-left: 2px; font-weight: 500; }
+  .bd-mini-bar {
+    height: 6px; border-radius: 999px; background: var(--bg-soft);
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .bd-mini-bar > i {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+
+  /* center cell — student profile */
+  .bd-cell-profile {
+    background: linear-gradient(135deg, var(--primary-soft), var(--bg-soft));
+    align-items: center; justify-content: center; text-align: center;
+    padding: 18px 16px;
+  }
+  .bd-cell-profile::before { display: none; }
+  .bd-profile-photo {
+    width: 132px; height: 132px; border-radius: 50%;
+    object-fit: cover; box-shadow: 0 6px 24px rgba(79, 70, 229, 0.25);
+    border: 4px solid var(--panel);
+    margin-bottom: 12px;
+  }
+  .bd-profile-name {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .bd-profile-id {
+    font-size: 13px; color: var(--text-muted);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    margin-bottom: 10px;
+  }
+  .bd-profile-tag {
+    display: inline-block; padding: 4px 12px;
+    background: var(--primary); color: #fff;
+    border-radius: 999px; font-size: 12px; font-weight: 500;
+  }
+
+  /* skill list cell */
+  .bd-skill-list { display: flex; flex-direction: column; gap: 6px; }
+  .bd-skill-pill {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px; border-radius: 8px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .bd-skill-pill .name { color: var(--text-soft); }
+  .bd-skill-pill .lvl  { color: var(--primary); font-weight: 600; }
+
+  @media (max-width: 980px) {
+    .bd-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .bd-cell-profile { grid-column: 1 / -1; }
+  }
+
   /* ===== Admin ===== */
   .admin-table {
     width: 100%; border-collapse: separate; border-spacing: 0;
@@ -2470,13 +2619,14 @@ const FEATURES = {
     { id: 'knowledge',  name: '跨境知识库',   icon: 'book' },
   ],
   teacher: [
-    { id: 'new-chat',       name: '新会话',     icon: 'plus', primary: true },
-    { id: 'capability',     name: '能力图谱',   icon: 'net' },
-    { id: 'ai-course',      name: 'AI 课程',    icon: 'chat' },
-    { id: 'ai-quiz',        name: 'AI 出题',    icon: 'chat' },
-    { id: 'student-works',  name: '学生作品',   icon: 'image' },
-    { id: 'ai-eval',        name: 'AI 评价',    icon: 'chat' },
-    { id: 'grades',         name: '学生成绩',   icon: 'chart' },
+    { id: 'new-chat',           name: '新会话',                 icon: 'plus', primary: true },
+    { id: 'behavior-dashboard', name: '学生学习行为数据看板',   icon: 'radar' },
+    { id: 'capability',         name: '能力图谱',               icon: 'net' },
+    { id: 'ai-course',          name: 'AI 课程',                icon: 'chat' },
+    { id: 'ai-quiz',            name: 'AI 出题',                icon: 'chat' },
+    { id: 'student-works',      name: '学生作品',               icon: 'image' },
+    { id: 'ai-eval',            name: 'AI 评价',                icon: 'chat' },
+    { id: 'grades',             name: '学生成绩',               icon: 'chart' },
   ],
   enterprise: [
     { id: 'new-chat', name: '新会话',     icon: 'plus', primary: true },
@@ -2509,6 +2659,7 @@ const ICONS = {
   wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
   plus:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   trash:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+  radar:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 18 21 6 21 2 8.5"/><polygon points="12 7 17 10.5 15.5 17 8.5 17 7 10.5"/><line x1="12" y1="2" x2="12" y2="21"/><line x1="2" y1="8.5" x2="22" y2="8.5"/></svg>',
 };
 
 // -------------------- LocalStorage helpers --------------------
@@ -4075,6 +4226,296 @@ RENDERERS['teacher:grades'] = async function(main, f, sess) {
   };
   renderTable();
 };
+
+// ========== TEACHER: 学生学习行为数据看板 ==========
+const FAKE_STUDENTS = [
+  { id: '20240301', name: '陈思远', avatar: 'assets/students/stu1.jpg', major: '跨境电商 2401', metrics: {
+      img_count: 128, img_score: 92, img_total: 88,
+      list_count: 46,  list_score: 90, list_total: 86,
+      power_used: 12420, power_eff: 94,
+      video_count: 22,  video_score: 89, video_total: 87,
+      copy_count: 58,   copy_score: 91,  copy_total: 88,
+      data_attr: 86,    data_total: 85,
+      price_chain: 88,  price_total: 87,
+      skills: [['Coze 智能体', 4], ['n8n 工作流', 3], ['SD 文生图', 4], ['豆包 Agent', 3]],
+    }
+  },
+  { id: '20240302', name: '林婧怡', avatar: 'assets/students/stu2.jpg', major: '跨境电商 2401', metrics: {
+      img_count: 141, img_score: 95, img_total: 92,
+      list_count: 52,  list_score: 93, list_total: 90,
+      power_used: 13880, power_eff: 96,
+      video_count: 28,  video_score: 92, video_total: 90,
+      copy_count: 64,   copy_score: 94,  copy_total: 92,
+      data_attr: 91,    data_total: 90,
+      price_chain: 93,  price_total: 91,
+      skills: [['Coze 智能体', 5], ['Dify 编排', 4], ['ComfyUI 工作流', 4], ['Midjourney', 5]],
+    }
+  },
+  { id: '20240303', name: '王予恒', avatar: 'assets/students/stu3.jpg', major: '跨境电商 2402', metrics: {
+      img_count: 96,  img_score: 84, img_total: 80,
+      list_count: 33, list_score: 82, list_total: 79,
+      power_used: 9180, power_eff: 86,
+      video_count: 14, video_score: 81, video_total: 78,
+      copy_count: 41,  copy_score: 83,  copy_total: 80,
+      data_attr: 79,   data_total: 78,
+      price_chain: 80, price_total: 79,
+      skills: [['Coze 智能体', 3], ['SD 文生图', 3], ['豆包 Agent', 2]],
+    }
+  },
+  { id: '20240304', name: '苏彦辰', avatar: 'assets/students/stu4.jpg', major: '跨境电商 2402', metrics: {
+      img_count: 112, img_score: 88, img_total: 84,
+      list_count: 41, list_score: 86, list_total: 83,
+      power_used: 11020, power_eff: 90,
+      video_count: 19, video_score: 85, video_total: 82,
+      copy_count: 49,  copy_score: 87,  copy_total: 84,
+      data_attr: 83,   data_total: 82,
+      price_chain: 85, price_total: 83,
+      skills: [['Coze 智能体', 4], ['n8n 工作流', 3], ['ComfyUI 工作流', 3]],
+    }
+  },
+  { id: '20240305', name: '何雨棠', avatar: 'assets/students/stu5.jpg', major: '跨境电商 2401', metrics: {
+      img_count: 104, img_score: 86, img_total: 82,
+      list_count: 38, list_score: 84, list_total: 81,
+      power_used: 10260, power_eff: 88,
+      video_count: 17, video_score: 83, video_total: 80,
+      copy_count: 45,  copy_score: 85,  copy_total: 82,
+      data_attr: 81,   data_total: 80,
+      price_chain: 82, price_total: 81,
+      skills: [['Coze 智能体', 3], ['Dify 编排', 3], ['SD 文生图', 4]],
+    }
+  },
+  { id: '20240306', name: '罗子睿', avatar: 'assets/students/stu6.jpg', major: '跨境电商 2403', metrics: {
+      img_count: 78,  img_score: 76, img_total: 72,
+      list_count: 24, list_score: 74, list_total: 71,
+      power_used: 7340, power_eff: 78,
+      video_count: 9,  video_score: 72, video_total: 70,
+      copy_count: 31,  copy_score: 75,  copy_total: 73,
+      data_attr: 71,   data_total: 70,
+      price_chain: 73, price_total: 71,
+      skills: [['Coze 智能体', 2], ['SD 文生图', 2]],
+    }
+  },
+  { id: '20240307', name: '黄梓萱', avatar: 'assets/students/stu7.jpg', major: '跨境电商 2403', metrics: {
+      img_count: 132, img_score: 93, img_total: 90,
+      list_count: 49, list_score: 91, list_total: 88,
+      power_used: 13120, power_eff: 95,
+      video_count: 25, video_score: 90, video_total: 89,
+      copy_count: 60,  copy_score: 92,  copy_total: 90,
+      data_attr: 89,   data_total: 88,
+      price_chain: 90, price_total: 89,
+      skills: [['Coze 智能体', 5], ['n8n 工作流', 4], ['ComfyUI 工作流', 4], ['Midjourney', 4]],
+    }
+  },
+  { id: '20240308', name: '周亦凡', avatar: 'assets/students/stu8.jpg', major: '跨境电商 2402', metrics: {
+      img_count: 88,  img_score: 80, img_total: 76,
+      list_count: 29, list_score: 78, list_total: 75,
+      power_used: 8460, power_eff: 82,
+      video_count: 12, video_score: 77, video_total: 74,
+      copy_count: 35,  copy_score: 79,  copy_total: 76,
+      data_attr: 75,   data_total: 74,
+      price_chain: 77, price_total: 75,
+      skills: [['Coze 智能体', 3], ['豆包 Agent', 2]],
+    }
+  },
+];
+
+function _bdComposite(s) {
+  const m = s.metrics;
+  return Math.round(
+    (m.img_total + m.list_total + m.video_total + m.copy_total +
+     m.data_total + m.price_total + m.power_eff + (m.skills.length * 5)) / 8 * 10
+  ) / 10;
+}
+
+RENDERERS['teacher:behavior-dashboard'] = function(main, f, sess) {
+  const sub = state.sub;
+  if (sub) {
+    const stu = FAKE_STUDENTS.find((s) => s.id === sub);
+    if (stu) return renderBdDetail(main, stu);
+  }
+  return renderBdRanking(main);
+};
+
+function renderBdRanking(main) {
+  const sorted = FAKE_STUDENTS
+    .map((s) => ({ s, score: _bdComposite(s) }))
+    .sort((a, b) => b.score - a.score);
+  const maxScore = sorted[0].score || 100;
+
+  const rows = sorted.map((it, idx) => {
+    const rank = idx + 1;
+    const medalCls = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+    const pct = Math.round(it.score / maxScore * 100);
+    return `
+      <tr class="bd-rank-row" data-stu="${it.s.id}">
+        <td><span class="bd-rank-medal ${medalCls}">${rank}</span></td>
+        <td>
+          <div class="bd-stu-cell">
+            <img class="bd-stu-avatar" src="${it.s.avatar}" alt=""/>
+            <div>
+              <div class="bd-stu-name">${escapeHtml(it.s.name)}</div>
+              <div class="bd-stu-id">${escapeHtml(it.s.id)} · ${escapeHtml(it.s.major)}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="bd-score">${it.score.toFixed(1)}</span></td>
+        <td>
+          <div class="bd-bar-wrap"><div class="bd-bar-fill" style="width:${pct}%"></div></div>
+        </td>
+        <td>${it.s.metrics.img_count}</td>
+        <td>${it.s.metrics.list_count}</td>
+        <td>${it.s.metrics.video_count}</td>
+        <td>${it.s.metrics.copy_count}</td>
+        <td style="color:var(--text-muted);">→</td>
+      </tr>`;
+  }).join('');
+
+  main.innerHTML = `
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title">学生学习行为数据看板</div>
+          <div class="page-sub">综合评分基于 8 项 AI 实操指标 · 点击任意学生查看个人看板</div>
+        </div>
+        <div class="page-actions">
+          <span style="font-size:12px;color:var(--text-muted);">学期：2024 春 · 共 ${FAKE_STUDENTS.length} 名学生</span>
+        </div>
+      </div>
+      <div class="bd-rank-bar">
+        <input class="bd-search" id="bdSearch" placeholder="搜索学生姓名 / 学号"/>
+        <button class="btn btn-sm" id="bdExport">导出 CSV（占位）</button>
+      </div>
+      <table class="bd-rank-table">
+        <thead>
+          <tr>
+            <th style="width:60px;">排名</th>
+            <th>学生</th>
+            <th>综合得分</th>
+            <th style="width:140px;">分数条</th>
+            <th>图片</th>
+            <th>Listing</th>
+            <th>视频</th>
+            <th>文案</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="bdRankBody">${rows}</tbody>
+      </table>
+    </div>`;
+
+  main.querySelectorAll('.bd-rank-row').forEach((tr) => {
+    tr.addEventListener('click', () => {
+      navigate({ view: 'app', feature: 'behavior-dashboard', sub: tr.dataset.stu });
+    });
+  });
+  const search = main.querySelector('#bdSearch');
+  search.oninput = () => {
+    const q = search.value.trim().toLowerCase();
+    main.querySelectorAll('.bd-rank-row').forEach((tr) => {
+      const txt = tr.textContent.toLowerCase();
+      tr.style.display = !q || txt.includes(q) ? '' : 'none';
+    });
+  };
+  main.querySelector('#bdExport').onclick = () => alert('导出功能为演示占位 · 后续将打通成绩与导出系统');
+}
+
+function renderBdDetail(main, stu) {
+  const m = stu.metrics;
+  const composite = _bdComposite(stu);
+
+  const cell = (title, body) => `
+    <div class="bd-cell">
+      <div class="bd-cell-title">${title}</div>
+      <div class="bd-cell-body">${body}</div>
+    </div>`;
+
+  const scoreBlock = (label, val, sub) => `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">${label}</span>
+      <span class="bd-metric-value score">${val}</span>
+    </div>
+    <div class="bd-mini-bar"><i style="width:${val}%"></i></div>
+    ${sub ? `<div class="bd-metric-label" style="text-align:right;margin-top:2px;">${sub}</div>` : ''}`;
+
+  const c1 = cell('产品图片处理', `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">处理数量</span>
+      <span class="bd-metric-value">${m.img_count}<span class="bd-metric-unit">张</span></span>
+    </div>
+    ${scoreBlock('单张 AI 得分', m.img_score)}
+    ${scoreBlock('综合得分', m.img_total)}
+  `);
+  const c2 = cell('产品 Listing 打造', `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">打造数量</span>
+      <span class="bd-metric-value">${m.list_count}<span class="bd-metric-unit">个</span></span>
+    </div>
+    ${scoreBlock('单个 Listing 得分', m.list_score)}
+    ${scoreBlock('综合得分', m.list_total)}
+  `);
+  const c3 = cell('累计算力消耗', `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">累计算力</span>
+      <span class="bd-metric-value">${m.power_used.toLocaleString()}<span class="bd-metric-unit">tk</span></span>
+    </div>
+    ${scoreBlock('使用效率', m.power_eff, '高于班级均值')}
+  `);
+  const c4 = cell('产品短视频制作', `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">制作数量</span>
+      <span class="bd-metric-value">${m.video_count}<span class="bd-metric-unit">条</span></span>
+    </div>
+    ${scoreBlock('单条视频得分', m.video_score)}
+    ${scoreBlock('综合得分', m.video_total)}
+  `);
+  const center = `
+    <div class="bd-cell bd-cell-profile">
+      <img class="bd-profile-photo" src="${stu.avatar}" alt=""/>
+      <div class="bd-profile-name">${escapeHtml(stu.name)}</div>
+      <div class="bd-profile-id">${escapeHtml(stu.id)}</div>
+      <div class="bd-profile-tag">${escapeHtml(stu.major)} · 综合 ${composite.toFixed(1)}</div>
+    </div>`;
+  const c6 = cell('产品文案制作', `
+    <div class="bd-metric-row">
+      <span class="bd-metric-label">制作数量</span>
+      <span class="bd-metric-value">${m.copy_count}<span class="bd-metric-unit">篇</span></span>
+    </div>
+    ${scoreBlock('单篇 AI 得分', m.copy_score)}
+    ${scoreBlock('综合得分', m.copy_total)}
+  `);
+  const c7 = cell('产品数据 / 属性分析', `
+    ${scoreBlock('属性匹配度', m.data_attr)}
+    ${scoreBlock('综合得分', m.data_total)}
+  `);
+  const c8 = cell('价格 / 供应链分析', `
+    ${scoreBlock('价格 + 供应链分析', m.price_chain)}
+    ${scoreBlock('综合得分', m.price_total)}
+  `);
+  const skillsBody = m.skills.map(([n, lvl]) => `
+    <div class="bd-skill-pill"><span class="name">${escapeHtml(n)}</span><span class="lvl">Lv.${lvl}</span></div>
+  `).join('') || '<div style="color:var(--text-muted);font-size:12px;">暂无自主开发的数字员工</div>';
+  const c9 = cell('自主开发技能（数字员工）', `<div class="bd-skill-list">${skillsBody}</div>`);
+
+  main.innerHTML = `
+    <div class="page">
+      <div class="bd-detail-hd">
+        <button class="bd-back-btn" id="bdBack">← 返回排名</button>
+        <div>
+          <div class="page-title">${escapeHtml(stu.name)} · 学习行为看板</div>
+          <div class="page-sub">${escapeHtml(stu.id)} · ${escapeHtml(stu.major)}</div>
+        </div>
+      </div>
+      <div class="bd-grid">
+        ${c1}${c2}${c3}
+        ${c4}${center}${c6}
+        ${c7}${c8}${c9}
+      </div>
+    </div>`;
+
+  main.querySelector('#bdBack').onclick = () => {
+    navigate({ view: 'app', feature: 'behavior-dashboard' });
+  };
+}
 
 // ========== ENTERPRISE: AI 工具 ==========
 RENDERERS['enterprise:ai-tools'] = function(main) { renderPlaceholder(main, 'AI 工具', '面向企业的 AI 工具集 · 下一版本上线'); };
