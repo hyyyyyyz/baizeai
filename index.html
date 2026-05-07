@@ -1289,6 +1289,34 @@
     background: linear-gradient(90deg, var(--primary), var(--accent));
   }
 
+  /* circular ring progress (per card) */
+  .bd-card-body {
+    display: flex; align-items: center; gap: 14px; flex: 1;
+  }
+  .bd-ring { flex-shrink: 0; width: 80px; height: 80px; position: relative; }
+  .bd-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+  .bd-ring-track { fill: none; stroke: var(--bg-soft); stroke-width: 7; }
+  .bd-ring-fill  { fill: none; stroke-width: 7; stroke-linecap: round;
+                   transition: stroke-dashoffset 0.5s ease; }
+  .bd-ring-text {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    line-height: 1.05; pointer-events: none;
+  }
+  .bd-ring-num {
+    font-size: 20px; font-weight: 700; color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .bd-ring-cap { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .bd-stats { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .bd-stat-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 6px;
+    font-size: 12px;
+  }
+  .bd-stat-row .label { color: var(--text-muted); }
+  .bd-stat-row .val   { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+  .bd-stat-row .val.score { color: var(--primary); }
+
   /* center column — profile + radar */
   .bd-center {
     display: flex; flex-direction: column; gap: 14px;
@@ -4494,40 +4522,66 @@ function _bdRadarSvg(values, labels) {
   </svg>`;
 }
 
+function _bdRing(value, caption) {
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  const r = 32, c = 2 * Math.PI * r;
+  const off = c * (1 - v / 100);
+  const gid = 'bdg' + Math.random().toString(36).slice(2, 8);
+  return `<div class="bd-ring">
+    <svg viewBox="0 0 80 80">
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="var(--primary)"/>
+        <stop offset="100%" stop-color="var(--accent)"/>
+      </linearGradient></defs>
+      <circle class="bd-ring-track" cx="40" cy="40" r="${r}"/>
+      <circle class="bd-ring-fill"  cx="40" cy="40" r="${r}"
+              stroke="url(#${gid})"
+              stroke-dasharray="${c.toFixed(2)}"
+              stroke-dashoffset="${off.toFixed(2)}"/>
+    </svg>
+    <div class="bd-ring-text">
+      <div class="bd-ring-num">${Math.round(v)}</div>
+      <div class="bd-ring-cap">${escapeHtml(caption || '综合')}</div>
+    </div>
+  </div>`;
+}
+
 function renderBdDetail(main, stu) {
   const m = stu.metrics;
   const composite = _bdComposite(stu);
 
-  const card = (title, rows) => `
+  // card(title, primaryScore, primaryCap, [...stat rows: [label, value, unit?, isScore?]])
+  const card = (title, primaryScore, primaryCap, rows) => `
     <div class="bd-card">
       <div class="bd-card-title">${title}</div>
-      ${rows.map(([label, value, unit, score]) => `
-        <div class="bd-sub">
-          <span class="bd-sub-label">${label}</span>
-          <span class="bd-sub-value${score ? ' score' : ''}">${value}${unit ? `<span class="bd-sub-unit">${unit}</span>` : ''}</span>
+      <div class="bd-card-body">
+        ${_bdRing(primaryScore, primaryCap)}
+        <div class="bd-stats">
+          ${rows.map(([label, value, unit, isScore]) => `
+            <div class="bd-stat-row">
+              <span class="label">${label}</span>
+              <span class="val${isScore ? ' score' : ''}">${value}${unit ? `<span class="bd-sub-unit">${unit}</span>` : ''}</span>
+            </div>
+          `).join('')}
         </div>
-        ${score ? `<div class="bd-mini-bar"><i style="width:${value}%"></i></div>` : ''}
-      `).join('')}
+      </div>
     </div>`;
 
   const left = `
     <div class="bd-col">
-      ${card('产品图片处理', [
+      ${card('产品图片处理', m.img_total, '综合', [
         ['累计数量', m.img_count, '张'],
         ['AI 得分',  m.img_score, '', true],
-        ['综合得分', m.img_total, '', true],
       ])}
-      ${card('产品短视频制作', [
+      ${card('产品短视频制作', m.video_total, '综合', [
         ['累计数量', m.video_count, '条'],
         ['AI 得分',  m.video_score, '', true],
-        ['综合得分', m.video_total, '', true],
       ])}
-      ${card('产品文案制作', [
+      ${card('产品文案制作', m.copy_total, '综合', [
         ['累计数量', m.copy_count, '篇'],
         ['AI 得分',  m.copy_score, '', true],
-        ['综合得分', m.copy_total, '', true],
       ])}
-      ${card('产品数据 / 属性分析', [
+      ${card('产品数据 / 属性分析', m.data_total, '综合', [
         ['属性匹配度', m.data_attr, '', true],
         ['综合得分',   m.data_total, '', true],
       ])}
@@ -4535,22 +4589,21 @@ function renderBdDetail(main, stu) {
 
   const right = `
     <div class="bd-col">
-      ${card('产品 Listing 打造', [
+      ${card('产品 Listing 打造', m.list_total, '综合', [
         ['累计数量', m.list_count, '个'],
         ['AI 得分',  m.list_score, '', true],
-        ['综合得分', m.list_total, '', true],
       ])}
-      ${card('累计算力消耗', [
+      ${card('累计算力消耗', m.power_eff, '效率', [
         ['累计算力', m.power_used.toLocaleString(), 'tk'],
         ['使用效率', m.power_eff, '', true],
       ])}
-      ${card('价格 / 供应链分析', [
+      ${card('价格 / 供应链分析', m.price_total, '综合', [
         ['价格+供应链', m.price_chain, '', true],
         ['综合得分',    m.price_total, '', true],
       ])}
-      ${card('整体活跃度', [
+      ${card('整体活跃度', composite, '排位', [
         ['累计提交',   m.img_count + m.list_count + m.video_count + m.copy_count, '次'],
-        ['班级排位百分比', composite, '', true],
+        ['综合排位',   composite.toFixed(1), '', true],
       ])}
     </div>`;
 
