@@ -4562,6 +4562,7 @@ function renderBdDetail(main, stu) {
               <span class="label">${label}</span>
               <span class="val${isScore ? ' score' : ''}">${value}${unit ? `<span class="bd-sub-unit">${unit}</span>` : ''}</span>
             </div>
+            ${isScore ? `<div class="bd-mini-bar"><i style="width:${Math.max(0, Math.min(100, Number(value) || 0))}%"></i></div>` : ''}
           `).join('')}
         </div>
       </div>
